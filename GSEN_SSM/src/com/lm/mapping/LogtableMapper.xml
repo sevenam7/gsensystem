@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lm.dao.LogtableMapper">
+  <resultMap id="BaseResultMap" type="com.lm.po.Logtable">
+    <id column="log_id" jdbcType="INTEGER" property="logId" />
+    <result column="user_id" jdbcType="INTEGER" property="userId" />
+    <result column="operType" jdbcType="CHAR" property="opertype" />
+    <result column="operTime" jdbcType="TIMESTAMP" property="opertime" />
+     <result column="operTime" jdbcType="CHAR" property="opertimeStr" />
+     <result column="IP" jdbcType="CHAR" property="IP" />
+  </resultMap>
+   <resultMap  type="com.lm.vo.UserVo" id="UserVo" extends="BaseResultMap">
+    <result column="name" jdbcType="CHAR" property="name" />
+     <result column="usertype" jdbcType="CHAR" property="usertype" />
+      <result column="userType_id" jdbcType="INTEGER" property="userType_id" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    log_id, user_id, operType, operTime,IP
+  </sql>
+  <!--查询日志信息 table-->
+	<select id="selectLog" resultMap="UserVo">
+		select logtable.*,usertable.name,usertypetable.userType from logtable inner join 
+        usertable on logtable.user_id=usertable.user_id inner join
+        usertypetable on usertable.userType_id=usertypetable.userType_id order by logtable.operTime desc
+        <where>
+			<if test="name!='' and name!=null">
+				 usertable.name like '%${name}%'
+			</if>
+			<if test="userType_id!='' and userType_id!=null">
+				and usertable.userType_id=#{userType_id}
+			</if>
+		</where>
+	</select>
+	 <!-- 新增日志信息 -->
+	<insert id="insertLog" parameterType="com.lm.po.Logtable">
+	    insert into Logtable(
+	      user_id, operType, operTime,IP
+	    )values(
+	       #{userId,jdbcType=INTEGER},#{opertype,jdbcType=CHAR},
+	       #{opertime,jdbcType=TIMESTAMP},#{IP,jdbcType=CHAR}
+	    )
+	</insert>
+</mapper>

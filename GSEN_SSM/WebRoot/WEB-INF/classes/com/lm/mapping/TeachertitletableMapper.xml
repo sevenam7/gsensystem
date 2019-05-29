@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lm.dao.TeachertitletableMapper">
+  <resultMap id="BaseResultMap" type="com.lm.po.Teachertitletable">
+    <id column="teaTitle_id" jdbcType="INTEGER" property="teatitleId" />
+    <result column="teaTitle" jdbcType="CHAR" property="teatitle" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    teaTitle_id, teaTitle
+  </sql>
+   <!-- 查询教师职称-->
+  <select id="selectTeachertitle" resultMap="BaseResultMap">
+      select Teachertitletable.* from Teachertitletable
+  </select>
+</mapper>

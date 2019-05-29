@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lm.dao.CoursetableMapper">
+  <resultMap id="BaseResultMap" type="com.lm.po.Coursetable">
+    <id column="course_id" jdbcType="INTEGER" property="courseId" />
+    <result column="teacher_id" jdbcType="INTEGER" property="teacher_id" />
+    <result column="teachVersion_id" jdbcType="INTEGER" property="teachversionId" />
+     <result column="grade_id" jdbcType="INTEGER" property="gradeId" />
+     <result column="pape_id" jdbcType="INTEGER" property="papeId" />
+    <result column="courseName" jdbcType="CHAR" property="coursename" />
+    <result column="coursePrice" jdbcType="DECIMAL" property="courseprice" />
+    <result column="browseNumber" jdbcType="INTEGER" property="browsenumber" />
+    <result column="knowledge" jdbcType="CHAR" property="knowledge" />
+    <result column="examineBit" jdbcType="TINYINT" property="examinebit" />
+    <result column="video" jdbcType="LONGVARCHAR" property="video" />
+    <result column="creationTime" jdbcType="TIMESTAMP" property="creationTime" />
+  </resultMap>
+  <resultMap type="com.lm.vo.CourseVo" id="CourseVo" extends="BaseResultMap">
+		<result column="teachVersion" jdbcType="CHAR" property="teachversion" />
+        <result column="gradeName" jdbcType="CHAR" property="gradename" />
+        <result column="teacherName" jdbcType="CHAR" property="teachername" />
+        <result column="subject" jdbcType="CHAR" property="subject" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    course_id, teacher_id,teachVersion_id,grade_id, pape_id,courseName, coursePrice, 
+    browseNumber, knowledge, examineBit,video,creationTime
+  </sql>
+   <!--根据老师id查询课件信息 table-->
+	<select id="selectCourseALL" resultMap="CourseVo">
+		select Coursetable.*,Teachertable.teacherName,gradetable.gradeName,teachversiontable.teachVersion,subjecttable.subject 
+		from Coursetable inner join 
+        Teachertable on Teachertable.teacher_id=Coursetable.teacher_id inner join
+        gradetable on Coursetable.grade_id=gradetable.grade_id inner join
+        teachversiontable on Coursetable.teachVersion_id=teachversiontable.teachVersion_id inner join
+        subjecttable on Teachertable.subject_id=subjecttable.subject_id
+        <where>
+			<if test="coursename!='' and coursename!=null">
+				 Coursetable.courseName like '%${coursename}%'
+			</if>
+			<if test="teachversionId!='' and teachversionId!=null">
+				and Coursetable.teachVersion_id=#{teachversionId}
+			</if>
+			<if test="gradeId!='' and gradeId!=null">
+				and Coursetable.grade_id=#{gradeId}
+			</if>
+			<if test="teacher_id!='' and teacher_id!=null">
+				and Coursetable.teacher_id=#{teacher_id}
+			</if>
+		</where>
+	</select>
+     <!-- 新增课件包信息 -->
+	<insert id="insertCourse" parameterType="com.lm.po.Coursetable">
+	    insert into Coursetable(
+	      teacher_id,teachVersion_id,grade_id,pape_id,courseName,coursePrice,browseNumber,
+	       knowledge, examineBit,video,creationTime
+	    )values(
+	        #{teacher_id,jdbcType=TINYINT},#{teachversionId,jdbcType=TINYINT},#{gradeId,jdbcType=TINYINT},
+	        #{papeId,jdbcType=TINYINT},#{coursename,jdbcType=CHAR},#{courseprice,jdbcType=DECIMAL}, 
+	        #{browsenumber,jdbcType=INTEGER},#{knowledge,jdbcType=CHAR},#{examinebit,jdbcType=TINYINT},
+	        #{video,jdbcType=LONGVARCHAR},#{creationTime,jdbcType=TIMESTAMP}
+	    )
+	</insert>
+<!-- 	根据老师id和课件包名称查询 -->
+    <select id="selectCourseBYcoursename" resultMap="BaseResultMap">
+          select Coursetable.* from Coursetable
+          <where>
+             <if test="coursename!='' and coursename!=null">
+				 Coursetable.courseName=#{coursename} 
+			</if>
+			<if test="teacher_id!='' and teacher_id!=null">
+				and Coursetable.teacher_id=${teacher_id}
+			</if>
+          </where>
+    </select>
+    <!-- 	根据课件包id查询 -->
+    <select id="selectCourseBYid" resultMap="BaseResultMap">
+          select Coursetable.* from Coursetable 
+          <where>
+             <if test="courseId!='' and courseId!=null">
+				 Coursetable.course_id=${courseId} 
+			</if>
+          </where>
+    </select>
+    <!--   修改课件包信息 -->
+    <update id="updateCourse" parameterType="com.lm.po.Coursetable">
+		update Coursetable
+		<set>
+			teacher_id= #{teacher_id,jdbcType=INTEGER},
+			teachVersion_id= #{teachversionId,jdbcType=INTEGER},
+			grade_id=#{gradeId,jdbcType=INTEGER},
+			pape_id= #{papeId,jdbcType=INTEGER},
+			courseName= #{coursename,jdbcType=CHAR},
+			coursePrice= #{courseprice,jdbcType=DECIMAL},
+			browseNumber= #{browsenumber,jdbcType=INTEGER},
+			knowledge= #{knowledge,jdbcType=CHAR},
+			examineBit= #{examinebit,jdbcType=INTEGER},
+			video= #{video,jdbcType=LONGVARCHAR},
+			creationTime= #{creationTime,jdbcType=TIMESTAMP}
+		</set>
+		where course_id = #{courseId,jdbcType=INTEGER}
+	</update>
+	<!-- 修改课件时查询课件包名称是否唯一-->
+    <select id="selectCourseNameOnly" resultMap="BaseResultMap">
+          select Coursetable.* from Coursetable
+          <where>
+             <if test="coursename!='' and coursename!=null">
+				 courseName=#{coursename} 
+			</if>
+			<if test="teacher_id!='' and teacher_id!=null">
+				and teacher_id=${teacher_id}
+			</if>
+			<if test="courseId!='' and courseId!=null">
+				and course_id!=${courseId}
+			</if>
+          </where>
+    </select>
+    <!-- 根据课件id进行删除 -->
+	<delete id="deleteCourse" parameterType="java.lang.String">
+		delete from Coursetable
+		<where> 
+ 			<if test="courseId !=null and courseId !=''"> 
+ 				Coursetable.course_id = #{courseId,jdbcType=INTEGER}
+ 			</if> 
+       </where> 
+	</delete>
+    
+</mapper>

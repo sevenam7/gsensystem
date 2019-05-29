@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lm.dao.UsertableMapper">
+  <resultMap id="BaseResultMap" type="com.lm.po.Usertable">
+    <id column="user_id" jdbcType="INTEGER" property="userId" />
+    <id column="userType_id" jdbcType="INTEGER" property="userType_id" />
+    <result column="nickname" jdbcType="CHAR" property="nickname" />
+    <result column="name" jdbcType="CHAR" property="name" />
+    <result column="account" jdbcType="CHAR" property="account" />
+    <result column="password" jdbcType="CHAR" property="password" />
+    <result column="mailboxAddress" jdbcType="CHAR" property="mailboxaddress" />
+    <result column="address" jdbcType="CHAR" property="address" />
+    <result column="sex" jdbcType="CHAR" property="sex" />
+    <result column="phoneNumber" jdbcType="CHAR" property="phoneNumber" />
+    <result column="wechat" jdbcType="CHAR" property="wechat" />
+    <result column="loginNumber" jdbcType="INTEGER" property="loginNumber" />
+    <result column="enabledBit" jdbcType="TINYINT" property="enabledBit" />
+    <result column="creationTime" jdbcType="TIMESTAMP" property="creationTime" />
+    <result column="creationTime" jdbcType="CHAR" property="creationTimeStr" />
+    <result column="picture" jdbcType="CHAR" property="picture" />
+  </resultMap>
+  <resultMap type="com.lm.vo.UserVo" id="UserVo" extends="BaseResultMap">
+		<result column="userType" jdbcType="CHAR" property="usertype" />
+        <result column="creationTime" jdbcType="TIMESTAMP" property="creationtime" />
+        <result column="enabledBit" jdbcType="TINYINT" property="enabledbit" />
+        <result column="remarks" jdbcType="CHAR" property="remarks" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    user_id, userType_id,nickname, name, account,password, mailboxAddress, address, sex, phoneNumber, wechat,loginNumber,enabledBit,creationTime,picture
+  </sql>
+<!--根据账号查询用户 -->
+  <select id="selectuserByName" resultMap="BaseResultMap">
+	select usertable.*,usertypetable.* from usertable inner join usertypetable on 
+	usertable.userType_id=usertypetable.userType_id
+     <where> 
+ 			<if test="account !=null and account !=''"> 
+ 				usertable.account =#{account,jdbcType=CHAR}
+ 			</if> 
+     </where> 
+  </select>
+<!--   修改登录次数 -->
+  <update id="updateloginNumber" parameterType="com.lm.po.Usertable">
+		update usertable
+		<set>
+			<if test="loginNumber != null and loginNumber !=''">
+				loginNumber = #{loginNumber,jdbcType=INTEGER}
+			</if>
+		</set>
+		where account = #{account,jdbcType=CHAR}
+	</update>
+	<!--查询管理员信息 -->
+	<select id="selectAdminALL" resultMap="UserVo">
+		select usertable.*,usertypetable.* from usertable inner join 
+		usertypetable on usertable.userType_id=usertypetable.userType_id
+		<where>
+			<if test="account !=null and account !=''">
+				usertable.account like '%${account}%'
+			</if>
+			<if test="name !=null and name!=''">
+				or usertable.name like '%${name}%'
+			</if>
+			<if test="address !=null and address !=''">
+				and usertable.address  like '%${address}%' 
+			</if>
+		</where>
+	</select>
+	<!-- 新增管理员信息 -->
+	<insert id="insertAdmin" parameterType="com.lm.po.Usertable">
+	    insert into Usertable(
+	       userType_id,nickname, name, account,password, 
+	       mailboxAddress, address, sex, phoneNumber, wechat,loginNumber,
+	       enabledBit,creationTime,picture
+	    )values(
+	       #{userType_id,jdbcType=INTEGER},#{nickname,jdbcType=CHAR},#{name,jdbcType=CHAR},
+	       #{account,jdbcType=CHAR},#{password,jdbcType=CHAR},#{mailboxaddress,jdbcType=CHAR},
+	       #{address,jdbcType=CHAR},#{sex,jdbcType=CHAR},#{phoneNumber,jdbcType=INTEGER},
+	       #{wechat,jdbcType=CHAR},#{loginNumber,jdbcType=INTEGER},
+	       #{enabledBit,jdbcType=TINYINT},
+	       #{creationTime,jdbcType=TIMESTAMP},#{picture,jdbcType=CHAR}
+	    )
+	</insert>
+	<!--根据账号查询用户 -->
+    <select id="selectOnlyAdminByAccount" resultMap="BaseResultMap">
+	select usertable.* from usertable 
+     <where> 
+ 			<if test="account !=null and account !=''"> 
+ 				usertable.account =#{account,jdbcType=CHAR}
+ 			</if> 
+     </where> 
+    </select>
+    <!-- 根据用户账号进行删除 -->
+	<delete id="deleteAdmin" parameterType="java.lang.String">
+		delete from usertable
+		where account = #{account,jdbcType=CHAR}
+	</delete>
+    <!--修改管理员信息 -->
+	<update id="updateAdmin" parameterType="com.lm.po.Usertable">
+	    update usertable set
+	    userType_id=#{userType_id,jdbcType=INTEGER},
+	    nickname=#{nickname,jdbcType=CHAR},
+	    name=#{name,jdbcType=CHAR},
+	    account=#{account,jdbcType=CHAR},
+	    password=#{password,jdbcType=CHAR},
+	    mailboxAddress=#{mailboxaddress,jdbcType=CHAR},
+	    address=#{address,jdbcType=CHAR},
+	    sex=#{sex,jdbcType=CHAR},
+	    phoneNumber=#{phoneNumber,jdbcType=INTEGER},
+	    wechat=#{wechat,jdbcType=CHAR},
+	    loginNumber=#{loginNumber,jdbcType=INTEGER},
+	    enabledBit=#{enabledBit,jdbcType=TINYINT},
+	    creationTime=#{creationTime,jdbcType=TIMESTAMP},
+	    picture=#{picture,jdbcType=CHAR}
+	    where account = #{account,jdbcType=CHAR}
+	</update>
+	<!--   修改用户密码 -->
+  <update id="updatePassword" parameterType="com.lm.po.Usertable">
+		update usertable
+		<set>
+			<if test="password != null and password !=''">
+				password = #{password,jdbcType=CHAR}
+			</if>
+		</set>
+		where user_id = #{userId,jdbcType=INTEGER}
+	</update>
+	<!--修改时判断用户是否唯一 -->
+    <select id="selectOnlyAdminedit" resultMap="BaseResultMap">
+	select usertable.* from usertable 
+     <where> 
+ 			<if test="account !=null and account !=''"> 
+ 				usertable.account =#{account,jdbcType=CHAR}
+ 			</if> 
+ 			<if test="userId !=null and userId !=''"> 
+ 				and usertable.user_id !=#{userId,jdbcType=INTEGER}
+ 			</if> 
+     </where> 
+    </select>
+    	<!--根据用户id查询用户信息 -->
+    <select id="selectAdmineBYuserId" resultMap="BaseResultMap">
+	select usertable.* from usertable 
+     <where> 
+ 			<if test="userId !=null and userId !=''"> 
+ 				 usertable.user_id =#{userId,jdbcType=INTEGER}
+ 			</if> 
+     </where> 
+    </select>
+</mapper>

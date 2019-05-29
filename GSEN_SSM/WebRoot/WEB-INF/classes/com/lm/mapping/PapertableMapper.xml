@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lm.dao.PapertableMapper">
+  <resultMap id="BaseResultMap" type="com.lm.po.Papertable">
+    <id column="pape_id" jdbcType="INTEGER" property="papeId" />
+    <result column="paperType_id" jdbcType="INTEGER" property="papertypeId" />
+    <result column="grade_id" jdbcType="INTEGER" property="gradeId" />
+    <result column="subject_id" jdbcType="INTEGER" property="subjectId" />
+    <result column="paperName" jdbcType="CHAR" property="papername" />
+    <result column="paperScore" jdbcType="DECIMAL" property="paperscore" />
+    <result column="testTime" jdbcType="CHAR" property="testtime" />
+    <result column="notes" jdbcType="CHAR" property="notes" />
+    <result column="enableBit" jdbcType="TINYINT" property="enablebit" />
+    <result column="creationTime" jdbcType="CHAR" property="creationTime" />
+  </resultMap>
+  <resultMap type="com.lm.vo.PaperVo" id="PaperVo" extends="BaseResultMap">
+	   <result column="paperType" jdbcType="CHAR" property="papertype" />
+	    <result column="gradeName" jdbcType="CHAR" property="gradename" />
+	    <result column="subject" jdbcType="CHAR" property="subject" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    pape_id, paperType_id, grade_id, subject_id, paperName, paperScore, testTime, notes,enableBit,creationTime
+  </sql>
+  <!-- 查询试卷名称和试卷id -->
+  <select id="selectpaperName" resultMap="BaseResultMap">
+      select Papertable.pape_id,Papertable.paperName from Papertable
+  </select>
+  <!-- 查询试卷 -->
+  <select id="selectPaper" resultMap="PaperVo">
+     select Papertable.*,gradetable.gradeName,subjecttable.subject,papertypetable.paperType from Papertable inner join
+      gradetable on Papertable.grade_id=gradetable.grade_id inner join
+      subjecttable on Papertable.subject_id=subjecttable.subject_id inner join 
+      papertypetable on Papertable.paperType_id=papertypetable.paperType_id
+      <where>
+			<if test="papername!='' and papername!=null">
+				 Papertable.paperName like '%${papername}%'
+			</if>
+			<if test="papertypeId!='' and papertypeId!=null">
+				and Papertable.paperType_id=#{papertypeId}
+			</if>
+			<if test="subjectId!='' and subjectId!=null">
+				and Papertable.subject_id=#{subjectId}
+			</if>
+		</where>
+  </select>
+    <!-- 新增试卷 -->
+	<insert id="insertPaper" parameterType="com.lm.po.Papertable">
+	    insert into Papertable(
+	      paperType_id, grade_id, subject_id, paperName, paperScore, testTime, notes,enableBit,creationTime
+	    )values(
+	       #{papertypeId,jdbcType=INTEGER},#{gradeId,jdbcType=INTEGER},#{subjectId,jdbcType=INTEGER},
+	       #{papername,jdbcType=CHAR},#{paperscore,jdbcType=DECIMAL},
+	       #{testtime,jdbcType=CHAR},#{notes,jdbcType=CHAR}, #{enablebit,jdbcType=TINYINT},
+	       #{creationTime,jdbcType=CHAR}
+	    )
+	</insert>
+<!-- 	根据试卷名称查询试卷 -->
+	<select id="selectPaperBYpaperName" resultMap="BaseResultMap">
+       select Papertable.* from Papertable
+      <where>
+			<if test="papername!='' and papername!=null">
+				 Papertable.paperName=#{papername}
+			</if>
+		</where>
+  </select>
+<!--   查询最大的试卷id -->
+  <select id="selectpapeId_MAX" resultMap="BaseResultMap">
+       select Papertable.pape_id from Papertable
+       where pape_id=(select MAX(pape_id) from Papertable)
+  </select>
+  <!-- 根据试卷id进行删除试卷 -->
+	<delete id="deletePaper" parameterType="java.lang.String">
+		delete from Papertable
+		<where> 
+ 			<if test="papeId !=null and papeId !=''"> 
+ 				Papertable.pape_id = #{papeId,jdbcType=INTEGER}
+ 			</if> 
+       </where> 
+	</delete>
+<!-- 	根据试卷id查询试卷信息 -->
+	<select id="selectpaperBYpaperid" resultMap="BaseResultMap">
+      select Papertable.* from Papertable
+      where Papertable.pape_id=#{papeId,jdbcType=INTEGER}
+  </select>
+  <!-- 修改试卷时查询试卷名称是否唯一-->
+    <select id="selectPaperNameOnly" resultMap="BaseResultMap">
+          select Papertable.* from Papertable
+          <where>
+             <if test="papername!='' and papername!=null">
+				 paperName=#{papername} 
+			</if>
+			<if test="papeId!='' and papeId!=null">
+				and pape_id!=${papeId}
+			</if>
+          </where>
+    </select>
+    <!--   修改试卷信息 -->
+  <update id="updatePaperBYpapeId" parameterType="com.lm.po.Papertable">
+		update Papertable
+		<set>
+		    paperType_id=#{papertypeId,jdbcType=INTEGER},
+		    grade_id=#{gradeId,jdbcType=INTEGER}, 
+		    subject_id=#{subjectId,jdbcType=INTEGER},
+		    paperName=#{papername,jdbcType=CHAR}, 
+		    paperScore=#{paperscore,jdbcType=DECIMAL},
+		    testTime=#{testtime,jdbcType=CHAR}, 
+		    notes=#{notes,jdbcType=CHAR},
+		    enableBit=#{enablebit,jdbcType=TINYINT},
+		    creationTime=#{creationTime,jdbcType=CHAR}
+		</set>
+		where Papertable.pape_id = #{papeId,jdbcType=INTEGER}
+	</update>
+</mapper>

@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lm.dao.TitletypetableMapper">
+  <resultMap id="BaseResultMap" type="com.lm.po.Titletypetable">
+    <id column="titleType_id" jdbcType="INTEGER" property="titletypeId" />
+    <result column="pape_id" jdbcType="INTEGER" property="papeId" />
+    <result column="titleType" jdbcType="CHAR" property="titletype" />
+    <result column="serial" jdbcType="CHAR" property="serial" />
+    <result column="remarks" jdbcType="CHAR" property="remarks" />
+    <result column="creationTime" jdbcType="TIMESTAMP" property="creationtime" />
+    <result column="enableBit" jdbcType="TINYINT" property="enablebit" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    titleType_id, pape_id, titleType, serial, remarks, creationTime, enableBit
+  </sql>
+  <!-- 新增题目类型 -->
+ 	<insert id="insertTitletype" parameterType="com.lm.po.Titletypetable"> 
+ 	    insert into Titletypetable( 
+ 	      pape_id, titleType, serial, remarks, creationTime, enableBit 
+ 	    )values( 
+ 	       #{papeId,jdbcType=INTEGER},#{titletype,jdbcType=CHAR}, 
+ 	       #{serial,jdbcType=CHAR},#{remarks,jdbcType=CHAR},#{creationtime,jdbcType=TIMESTAMP}, 
+ 	       #{enablebit,jdbcType=TINYINT} 
+ 	    ) 
+ 	</insert> 
+ 	<!--   查询最大的题目类型id -->
+  <select id="selectTitletypeId_MAX" resultMap="BaseResultMap">
+       select Titletypetable.titleType_id from Titletypetable
+       where titleType_id=(select MAX(titleType_id) from Titletypetable)
+  </select>
+   <!-- 根据题目类型id进行删除题目类型 -->
+	<delete id="deleteTitleType" parameterType="java.lang.String">
+		delete from Titletypetable
+		<where> 
+ 			<if test="titletypeId !=null and titletypeId !=''"> 
+ 				Titletypetable.titleType_id = #{titletypeId,jdbcType=INTEGER}
+ 			</if> 
+       </where> 
+	</delete>
+	<!--  根据试卷id查询题目类型-->
+  <select id="selectTitleTyle_paperid" resultMap="BaseResultMap">
+       select Titletypetable.* from Titletypetable
+       where pape_id=#{papeId,jdbcType=INTEGER}
+  </select>
+  
+</mapper>

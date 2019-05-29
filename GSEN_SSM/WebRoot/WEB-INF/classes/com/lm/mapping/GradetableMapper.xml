@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lm.dao.GradetableMapper">
+  <resultMap id="BaseResultMap" type="com.lm.po.Gradetable">
+    <id column="grade_id" jdbcType="INTEGER" property="gradeId" />
+    <result column="gradeName" jdbcType="CHAR" property="gradename" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    grade_id, gradeName
+  </sql>
+  <!-- 查询年级 -->
+  <select id="selectGrade" resultMap="BaseResultMap">
+      select Gradetable.* from Gradetable
+  </select>
+   <!-- 根据id查询年级 -->
+  <select id="selectGradeBYid" resultMap="BaseResultMap">
+      select Gradetable.* from Gradetable
+      where grade_id=#{gradeId}
+  </select>
+</mapper>

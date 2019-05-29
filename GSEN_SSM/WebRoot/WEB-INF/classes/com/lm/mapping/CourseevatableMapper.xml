@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lm.dao.CourseevatableMapper">
+  <resultMap id="BaseResultMap" type="com.lm.po.Courseevatable">
+    <id column="courseEva_id" jdbcType="INTEGER" property="courseevaId" />
+    <result column="course_id" jdbcType="INTEGER" property="courseId" />
+    <result column="student_id" jdbcType="INTEGER" property="studentId" />
+    <result column="satisfaction" jdbcType="CHAR" property="satisfaction" />
+    <result column="evaluationContent" jdbcType="LONGVARCHAR" property="evaluationcontent" />
+    <result column="enabledBit" jdbcType="TINYINT" property="enabledbit" />
+    <result column="evaluationTime" jdbcType="TIMESTAMP" property="evaluationTime" />
+     <result column="evaluationTime" jdbcType="CHAR" property="evaluationTimeStr" />
+  </resultMap>
+    <resultMap type="com.lm.vo.CourseVo" id="CourseevaVo" extends="BaseResultMap">
+        <result column="name" jdbcType="CHAR" property="name" />
+        <result column="courseName" jdbcType="CHAR" property="coursename" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    courseEva_id, course_id, student_id,satisfaction,evaluationContent,enabledBit,evaluationTime
+  </sql>
+   <!--查询课件评价信息 table-->
+	<select id="selectCourseevaALL" resultMap="CourseevaVo">
+		select courseevatable.*,coursetable.courseName,studenttable.name from courseevatable inner join 
+        coursetable on courseevatable.course_id=coursetable.course_id inner join
+        studenttable on courseevatable.student_id=studenttable.student_id 
+        <where>
+			<if test="coursename!='' and coursename!=null">
+				coursetable.courseName like '%${coursename}%'
+			</if>
+			<if test="name!='' and name!=null">
+				and studenttable.name like '%${name}%'
+			</if>
+			<if test="enabledbit!='' and enabledbit!=null">
+				and courseevatable.enabledBit=#{enabledbit}
+			</if>
+		</where>
+	</select>
+	  <!--根据课件评价id查询课件评价信息 -->
+	<select id="selectCourseevaBYid" resultMap="BaseResultMap">
+		select courseevatable.*from courseevatable 
+        <where>
+			<if test="courseevaId!='' and courseevaId!=null">
+				 courseevatable.courseEva_id=#{courseevaId}
+			</if>
+		</where>
+	</select>
+	<!--   根据课件评价id修改评价启用否 -->
+  <update id="exCourseevaBYid" parameterType="com.lm.po.Courseevatable">
+		update Courseevatable
+		<set>
+		    course_id=#{courseId,jdbcType=INTEGER},
+		    student_id=#{studentId,jdbcType=INTEGER},
+		    satisfaction=#{satisfaction,jdbcType=CHAR},
+		    evaluationContent=#{evaluationcontent,jdbcType=LONGVARCHAR},
+		    enabledBit=#{enabledbit,jdbcType=TINYINT},
+		    evaluationTime=#{evaluationTime,jdbcType=TIMESTAMP}
+		</set>
+		where courseEva_id = #{courseevaId,jdbcType=INTEGER}
+	</update>
+	 <!--根据课件包id查询课件评价信息 -->
+	<select id="selectCourseevaBYcourseId" resultMap="BaseResultMap">
+		select courseevatable.* from courseevatable 
+        <where>
+			<if test="courseId!='' and courseId!=null">
+				courseevatable.course_id=#{courseId}
+			</if>
+		</where>
+	</select>
+	<!-- 根据课件id删除课件评价信息 -->
+	<delete id="deleteCourseevaBYcourseId" parameterType="java.lang.String">
+		delete from courseevatable
+		<where> 
+ 			<if test="courseId !=null and courseId !=''"> 
+ 				courseevatable.course_id = #{courseId,jdbcType=INTEGER}
+ 			</if> 
+       </where> 
+	</delete>
+</mapper>

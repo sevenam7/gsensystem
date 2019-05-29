@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lm.dao.PapertypetableMapper">
+  <resultMap id="BaseResultMap" type="com.lm.po.Papertypetable">
+    <id column="paperType_id" jdbcType="INTEGER" property="papertypeId" />
+    <result column="paperType" jdbcType="CHAR" property="papertype" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    paperType_id, paperType
+  </sql>
+   <!-- 查询试卷类型-->
+  <select id="selectPapertype" resultMap="BaseResultMap">
+         select Papertypetable.* from Papertypetable
+  </select>
+   
+</mapper>

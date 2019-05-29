@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lm.dao.TeachversiontableMapper">
+  <resultMap id="BaseResultMap" type="com.lm.po.Teachversiontable">
+    <id column="teachVersion_id" jdbcType="INTEGER" property="teachversionId" />
+    <result column="teachVersion" jdbcType="CHAR" property="teachversion" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    teachVersion_id, teachVersion
+  </sql>
+   <!-- 查询教学版本 -->
+  <select id="selectTeachversion" resultMap="BaseResultMap">
+      select Teachversiontable.* from Teachversiontable
+  </select>
+  <!-- 根据id查询教学版本 -->
+  <select id="selectTeachversionBYid" resultMap="BaseResultMap">
+      select Teachversiontable.* from Teachversiontable
+      where teachVersion_id=#{teachversionId}
+  </select>
+</mapper>

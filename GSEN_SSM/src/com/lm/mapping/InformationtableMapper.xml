@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lm.dao.InformationtableMapper">
+  <resultMap id="BaseResultMap" type="com.lm.po.Informationtable">
+    <id column="information_id" jdbcType="INTEGER" property="informationId" />
+    <result column="headline" jdbcType="CHAR" property="headline" />
+    <result column="uploadTime" jdbcType="TIMESTAMP" property="uploadtime" />
+      <result column="uploadTime" jdbcType="CHAR" property="uploadtimeStr" />
+    <result column="subtitle" jdbcType="CHAR" property="subtitle" />
+    <result column="inforPicture" jdbcType="CHAR" property="inforpicture" />
+    <result column="content" jdbcType="CHAR" property="content" />
+     <result column="enabledBit" jdbcType="TINYINT" property="enabledBit" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    information_id, headline, uploadTime,subtitle, inforPicture, content,enabledBit
+  </sql>
+<!--   查询资讯信息 -->
+  <select id="selectInformation" resultMap="BaseResultMap">
+		select informationtable.* from informationtable
+		<where>
+			<if test="headline!='' and headline!=null">
+				 informationtable.headline like '%${headline}%'
+			</if>
+			<if test="subtitle!='' and subtitle!=null">
+				and informationtable.subtitle like '%${subtitle}%'
+			</if>
+			<if test="enabledBit!='' and enabledBit!=null">
+				and informationtable.enabledBit=#{enabledBit}
+			</if>
+			<if test="startTime!='' and startTime!=null and endTime!='' and endTime!=null ">
+				and informationtable.uploadTime between #{startTime} and #{endTime}  
+				<!-- 时间段条件  startTime ：开始时间  endTime：结束时间 -->
+			</if>
+		</where>
+	</select>
+    <!-- 新增资讯信息 -->
+	<insert id="insertInformation" parameterType="com.lm.po.Informationtable">
+	    insert into Informationtable(
+	      headline,uploadTime,subtitle,inforPicture,content,enabledBit
+	    )values(
+	       #{headline,jdbcType=CHAR},#{uploadtime,jdbcType=TIMESTAMP},
+	       #{subtitle,jdbcType=CHAR},#{inforpicture,jdbcType=CHAR},#{content,jdbcType=CHAR},
+	       #{enabledBit,jdbcType=TINYINT}
+	    )
+	</insert>
+	<!-- 根据资讯id进行删除 -->
+	<delete id="deleteInformation" parameterType="java.lang.String">
+		delete from Informationtable
+		<where> 
+ 			<if test="informationId !=null and informationId !=''"> 
+ 				Informationtable.information_id = #{informationId,jdbcType=INTEGER}
+ 			</if> 
+       </where> 
+	</delete>
+     <!--根据资讯ID查询教育资讯信息 -->
+   <select id="selectInformationById" resultMap="BaseResultMap">
+	select Informationtable.* from Informationtable 
+     <where> 
+ 			<if test="informationId !=null and informationId !=''"> 
+ 				information_id =#{informationId,jdbcType=INTEGER}
+ 			</if> 
+     </where> 
+  </select>
+  <!--   修改教育资讯信息 -->
+  <update id="updateInformation" parameterType="com.lm.po.Informationtable">
+		update Informationtable
+		<set>
+			headline= #{headline,jdbcType=CHAR},
+			subtitle= #{subtitle,jdbcType=CHAR},
+			uploadTime=#{uploadtime,jdbcType=TIMESTAMP},
+			inforPicture= #{inforpicture,jdbcType=CHAR},
+			content= #{content,jdbcType=CHAR},
+			enabledBit= #{enabledBit,jdbcType=CHAR}
+		</set>
+		where information_id = #{informationId,jdbcType=INTEGER}
+	</update>
+  <!--  根据大标题 查询资讯信息 -->
+  <select id="selectInformationOnly" resultMap="BaseResultMap">
+		select informationtable.* from informationtable
+		<where>
+			<if test="headline!='' and headline!=null">
+				 informationtable.headline=#{headline,jdbcType=CHAR}
+			</if>
+		</where>
+	</select>
+	  <!--  修改时查询大标题是否唯一-->
+  <select id="selectInformationOnlyedit" resultMap="BaseResultMap">
+		select informationtable.* from informationtable
+		<where>
+			<if test="headline!='' and headline!=null">
+				 informationtable.headline=#{headline,jdbcType=CHAR}
+			</if>
+			<if test="informationId!='' and informationId!=null">
+				and informationtable.information_id!=#{informationId,jdbcType=CHAR}
+			</if>
+		</where>
+	</select>
+</mapper>

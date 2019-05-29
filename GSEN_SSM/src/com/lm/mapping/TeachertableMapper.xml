@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lm.dao.TeachertableMapper">
+  <resultMap id="BaseResultMap" type="com.lm.po.Teachertable">
+    <id column="teacher_id" jdbcType="INTEGER" property="teacherId" />
+    <result column="subject_id" jdbcType="INTEGER" property="subjectId" />
+    <result column="teaTitle_id" jdbcType="INTEGER" property="teaTitle_id" />
+    <result column="teacherNickname" jdbcType="CHAR" property="teacherNickname" />
+    <result column="teacherName" jdbcType="CHAR" property="teachername" />
+    <result column="password" jdbcType="CHAR" property="password" />
+    <result column="phoneNumber" jdbcType="CHAR" property="phonenumber" />
+    <result column="sex" jdbcType="CHAR" property="sex" />
+    <result column="teachAge" jdbcType="CHAR" property="teachage" />
+    <result column="education" jdbcType="CHAR" property="education" />
+    <result column="address" jdbcType="CHAR" property="address" />
+    <result column="dateBirth" jdbcType="TIMESTAMP" property="datebirth" />
+    <result column="graduationCollege" jdbcType="CHAR" property="graduationcollege" />
+    <result column="workUnit" jdbcType="CHAR" property="workunit" />
+    <result column="qq" jdbcType="INTEGER" property="qq" />
+    <result column="wechat" jdbcType="CHAR" property="wechat" />
+    <result column="teacherStyle" jdbcType="CHAR" property="teacherstyle" />
+    <result column="picture" jdbcType="LONGVARCHAR" property="picture" />
+    <result column="personalProfile" jdbcType="LONGVARCHAR" property="personalprofile" />
+    <result column="examineBit" jdbcType="INTEGER" property="examineBit" />
+    <result column="creationTime" jdbcType="TIMESTAMP" property="creationTime" />
+    <result column="creationTime" jdbcType="TIMESTAMP" property="creationTimeStr" />
+    <result column="edCertificates" jdbcType="LONGVARCHAR" property="edCertificates" />
+    <result column="teaQuaNumber" jdbcType="CHAR" property="teaQuaNumber" />
+    <result column="idCard" jdbcType="CHAR" property="idCard" />
+  </resultMap>
+   <resultMap type="com.lm.vo.TeaVo" id="TeaVo" extends="BaseResultMap">
+		<result column="subject" jdbcType="CHAR" property="subject" />
+		<result column="teachVersion_id" jdbcType="INTEGER" property="teachversionId" />
+        <result column="courseName" jdbcType="CHAR" property="coursename" />
+        <result column="coursePrice" jdbcType="DECIMAL" property="courseprice" />
+        <result column="browseNumber" jdbcType="INTEGER" property="browsenumber" />
+        <result column="knowledge" jdbcType="CHAR" property="knowledge" />
+        <result column="examineBit" jdbcType="INTEGER" property="examinebit" />
+        <result column="video" jdbcType="LONGVARCHAR" property="video" />
+        <result column="Paper" jdbcType="LONGVARCHAR" property="paper" />
+        <result column="teaTitle" jdbcType="CHAR" property="teatitle" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    teacher_id, subject_id, teaTitle_id, teacherNickname, teacherName, password, phoneNumber, sex, teachAge, education, 
+    address, dateBirth, graduationCollege, workUnit, qq, wechat, teacherStyle, picture, personalProfile,examineBit,
+    creationTime,edCertificates,teaQuaNumber,idCard
+  </sql>
+  <!--查询老师信息 -->
+	<select id="selectTeacherALL" resultMap="TeaVo">
+		select teachertable.* ,teachertitletable.*,subjecttable.* from teachertable inner join 
+        teachertitletable on teachertable.teaTitle_id=teachertitletable.teaTitle_id  inner join 
+        subjecttable on teachertable.subject_id=subjecttable.subject_id
+        <where>
+			<if test="teachername!='' and teachername!=null">
+				 teachertable.teacherName like '%${teachername}%'
+			</if>
+			<if test="graduationcollege!='' and graduationcollege!=null">
+				and teachertable.graduationCollege like '%${graduationcollege}%'
+			</if>
+			<if test="subjectId!='' and subjectId!=null">
+				and teachertable.subject_id=#{subjectId}
+			</if>
+			<if test="startTime!='' and startTime!=null and endTime!='' and endTime!=null ">
+				and teachertable.creationTime between #{startTime} and #{endTime}  
+				<!-- 时间段条件  startTime ：开始时间  endTime：结束时间 -->
+			</if>
+			<if test="teaTitle_id!='' and teaTitle_id!=null">
+				and teachertable.teaTitle_id=#{teaTitle_id}
+			</if>
+			<if test="examineBit!='' and examineBit!=null">
+				and teachertable.examineBit=#{examineBit}
+			</if>
+		</where>
+	</select>
+<!-- 	根据id查询老师信息 -->
+	<select id="selectTeacherBYid" resultMap="BaseResultMap">
+	     	select teachertable.*  from teachertable 
+	     	<where>
+			<if test="teacherId!='' and teacherId!=null">
+				 teachertable.teacher_id=#{teacherId}
+			</if>
+		</where>
+	</select>
+	 <!--   修改老师 -->
+  <update id="updateTeacher" parameterType="com.lm.po.Teachertable">
+		update teachertable
+		<set>
+		    subject_id= #{subjectId,jdbcType=INTEGER},
+		    teaTitle_id= #{teaTitle_id,jdbcType=INTEGER},
+		    teacherNickname= #{teacherNickname,jdbcType=CHAR},
+			teacherName= #{teachername,jdbcType=CHAR},
+			password= #{password,jdbcType=CHAR},
+			phoneNumber= #{phonenumber,jdbcType=CHAR},
+			sex= #{sex,jdbcType=CHAR},
+			teachAge= #{teachage,jdbcType=CHAR},
+			education= #{education,jdbcType=CHAR},
+			address= #{address,jdbcType=CHAR},
+			dateBirth= #{datebirth,jdbcType=TIMESTAMP},
+			graduationCollege= #{graduationcollege,jdbcType=CHAR},
+			workUnit= #{workunit,jdbcType=CHAR},
+			qq= #{qq,jdbcType=INTEGER},
+			wechat= #{wechat,jdbcType=CHAR},
+			teacherStyle= #{teacherstyle,jdbcType=CHAR},
+			picture= #{picture,jdbcType=LONGVARCHAR},
+			personalProfile= #{personalprofile,jdbcType=LONGVARCHAR},
+			examineBit= #{examineBit,jdbcType=INTEGER},
+			creationTime= #{creationTime,jdbcType=TIMESTAMP},
+			edCertificates= #{edCertificates,jdbcType=LONGVARCHAR},
+			teaQuaNumber= #{teaQuaNumber,jdbcType=CHAR},
+			idCard=#{idCard,jdbcType=CHAR}
+		</set>
+		where teachertable.teacher_id=#{teacherId}
+	</update>
+	
+</mapper>

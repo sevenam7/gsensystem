@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lm.dao.SubjecttableMapper">
+  <resultMap id="BaseResultMap" type="com.lm.po.Subjecttable">
+    <id column="subject_id" jdbcType="INTEGER" property="subjectId" />
+    <result column="subject" jdbcType="CHAR" property="subject" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    subject_id, subject
+  </sql>
+   <!-- 查询学科-->
+  <select id="selectSubject" resultMap="BaseResultMap">
+         select subjecttable.subject_id,subjecttable.subject from subjecttable
+  </select>
+  <!-- 根据id查询学科-->
+  <select id="selectSubjectBYid" resultMap="BaseResultMap">
+         select subjecttable.* from subjecttable
+         <where>
+			<if test="subjectId!='' and subjectId!=null">
+				 subjecttable.subject_id=#{subjectId}
+			</if>
+		</where>
+  </select>
+</mapper>

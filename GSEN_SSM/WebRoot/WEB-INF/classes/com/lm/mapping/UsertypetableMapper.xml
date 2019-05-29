@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lm.dao.UsertypetableMapper">
+  <resultMap id="BaseResultMap" type="com.lm.po.Usertypetable">
+<!--   "usertypeId"跟po对应，"userType_id"跟数据库对应 -->
+    <id column="userType_id" jdbcType="INTEGER" property="usertypeId" />
+    <result column="userType" jdbcType="CHAR" property="usertype" />
+    <result column="creationTime" jdbcType="TIMESTAMP" property="creationtime" />
+    <result column="creationTime" jdbcType="CHAR" property="creationtimeStr" />
+    <result column="enabledBit" jdbcType="TINYINT" property="enabledbit" />
+    <result column="remarks" jdbcType="CHAR" property="remarks" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    userType_id, userType, creationTime, enabledBit,remarks
+  </sql>
+  <!--根据用户类型ID查询用户类型信息 -->
+  <select id="selectuserTypeByid" resultMap="BaseResultMap">
+	select usertypetable.* from usertypetable
+     <where> 
+ 			<if test="usertypeId !=null and usertypeId !=''"> 
+ 				usertypetable.userType_id =#{usertypeId,jdbcType=INTEGER}
+ 			</if> 
+     </where> 
+  </select>
+<!-- 查询用户类型 -->
+  <select id="selectuserType" resultMap="BaseResultMap">
+      select usertypetable.* from usertypetable
+  </select>
+<!--   查询所有用户类型 table -->
+   <select id="selectuserTypeAll" resultMap="BaseResultMap">
+      select usertypetable.* from usertypetable
+       <where> 
+ 			<if test="usertypeId !=null and usertypeId !=''"> 
+ 				usertypetable.userType_id =#{usertypeId,jdbcType=INTEGER}
+ 			</if> 
+ 			<if test="startTime!='' and startTime!=null and endTime!='' and endTime!=null ">
+				and usertypetable.creationtime between #{startTime} and #{endTime}  
+				<!-- 时间段条件  startTime ：开始时间  endTime：结束时间 -->
+			</if>
+     </where> 
+  </select>
+  <!-- 根据用户类型名称查询用户类型 -->
+  <select id="selectuserTypeBYname" resultMap="BaseResultMap">
+      select usertypetable.* from usertypetable
+      where usertypetable.userType=#{usertype}
+  </select>
+  <!-- 新增用户类型信息 -->
+	<insert id="insertUserType" parameterType="com.lm.po.Usertypetable">
+	    insert into Usertypetable(
+	      userType, creationTime, enabledBit,remarks
+	    )values(
+	       #{usertype,jdbcType=CHAR},#{creationtime,jdbcType=TIMESTAMP},
+	       #{enabledbit,jdbcType=TINYINT},#{remarks,jdbcType=CHAR}
+	    )
+	</insert>
+ <!--   查询最大的用户类型id -->
+  <select id="selectUserTypeId_MAX" resultMap="BaseResultMap">
+       select Usertypetable.userType_id from Usertypetable
+       where userType_id=(select MAX(userType_id) from Usertypetable)
+  </select>
+   <!-- 根据用户类型id进行删除用户类型 -->
+<!--为什么用_parameter参数    Mybatis默认采用ONGL解析参数，所以会自动采用对象树的形式取Integer.cmpid。Integer对象没有cmpid属性。 -->
+<!-- 如果不解析参数，mybatis自动识别传入的参数，不会报错。 -->
+		<delete id="deleteUserType" parameterType="java.lang.Integer">
+		delete from Usertypetable
+		<where> 
+ 			<if test="_parameter !=null and _parameter !=''"> 
+ 				userType_id = #{_parameter,jdbcType=INTEGER}
+ 			</if> 
+       </where> 
+	</delete>
+	<!--修改用户类型信息 -->
+	<update id="updateUserType" parameterType="com.lm.po.Usertypetable">
+	    update Usertypetable set
+	    userType=#{usertype,jdbcType=CHAR},
+	    creationTime=#{creationtime,jdbcType=TIMESTAMP},
+	    enabledBit=#{enabledbit,jdbcType=TINYINT},
+	    remarks=#{remarks,jdbcType=CHAR}
+	    where userType_id = #{usertypeId,jdbcType=INTEGER}
+	</update>
+	  <!-- 修改时查询用户类型名称是否唯一 -->
+  <select id="selectuserTypeOnly" resultMap="BaseResultMap">
+      select usertypetable.* from usertypetable
+      where usertypetable.userType=#{usertype} 
+           and usertypetable.userType_id!=#{usertypeId}
+  </select>
+ 
+</mapper>

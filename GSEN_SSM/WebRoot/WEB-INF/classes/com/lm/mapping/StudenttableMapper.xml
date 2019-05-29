@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lm.dao.StudenttableMapper">
+  <resultMap id="BaseResultMap" type="com.lm.po.Studenttable">
+    <id column="student_id" jdbcType="INTEGER" property="studentId" />
+    <result column="nickName" jdbcType="CHAR" property="nickname" />
+    <result column="name" jdbcType="CHAR" property="name" />
+    <result column="password" jdbcType="CHAR" property="password" />
+    <result column="phoneNumber" jdbcType="CHAR" property="phonenumber" />
+    <result column="sex" jdbcType="CHAR" property="sex" />
+    <result column="qq" jdbcType="INTEGER" property="qq" />
+    <result column="wechat" jdbcType="CHAR" property="wechat" />
+    <result column="enabledBit" jdbcType="TINYINT" property="enabledbit" />
+    <result column="creationTime" jdbcType="TIMESTAMP" property="creationtime" />
+    <result column="creationTime" jdbcType="CHAR" property="creationtimeStr" />
+    <result column="picture" jdbcType="LONGVARCHAR" property="picture" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    student_id, nickName, name, password, phoneNumber, sex, qq, wechat, enabledBit, creationTime,picture
+  </sql>
+  <!--查询学生信息 -->
+	<select id="selectStudentALL" resultMap="BaseResultMap">
+		select Studenttable.*  from Studenttable 
+        <where>
+			<if test="name!='' and name!=null">
+				 Studenttable.name like '%${name}%'
+			</if>
+			<if test="enabledbit!='' and enabledbit!=null">
+				and Studenttable.enabledBit=#{enabledbit}
+			</if>
+			<if test="startTime!='' and startTime!=null and endTime!='' and endTime!=null ">
+				and Studenttable.creationTime between #{startTime} and #{endTime}  
+				<!-- 时间段条件  startTime ：开始时间  endTime：结束时间 -->
+			</if>
+		</where>
+	</select>
+	 <!--根据学生id查询学生信息 -->
+	<select id="selectStudentBYid" resultMap="BaseResultMap">
+		select Studenttable.*  from Studenttable 
+        <where>
+			<if test="studentId!='' and studentId!=null">
+				 Studenttable.student_id=#{studentId}
+			</if>
+		</where>
+	</select>
+	<!--   根据学生id修改学生启用否 -->
+  <update id="updateStudentBYstudentId" parameterType="com.lm.po.Studenttable">
+		update Studenttable
+		<set>
+		    nickName=#{nickname,jdbcType=CHAR},
+		    name=#{name,jdbcType=CHAR},
+		    password=#{password,jdbcType=CHAR},
+		    phoneNumber=#{phonenumber,jdbcType=CHAR},
+		    sex=#{sex,jdbcType=CHAR},
+		    qq=#{qq,jdbcType=INTEGER}, 
+		    wechat=#{wechat,jdbcType=CHAR}, 
+		    enabledBit=#{enabledbit,jdbcType=TINYINT},
+		    creationTime=#{creationtime,jdbcType=TIMESTAMP},
+		    picture=#{picture,jdbcType=LONGVARCHAR}
+		</set>
+		where student_id = #{studentId,jdbcType=INTEGER}
+	</update>
+</mapper>

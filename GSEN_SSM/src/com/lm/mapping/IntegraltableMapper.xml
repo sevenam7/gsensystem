@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lm.dao.IntegraltableMapper">
+  <resultMap id="BaseResultMap" type="com.lm.po.Integraltable">
+    <id column="integral_id" jdbcType="INTEGER" property="integralId" />
+    <result column="student_id" jdbcType="INTEGER" property="studentId" />
+     <result column="teacher_id" jdbcType="INTEGER" property="teacher_id" />
+    <result column="integralFlow" jdbcType="CHAR" property="integralflow" />
+    <result column="integralDirection" jdbcType="CHAR" property="integraldirection" />
+    <result column="integral" jdbcType="CHAR" property="integral" />
+    <result column="operationTime" jdbcType="TIMESTAMP" property="operationtime" />
+    <result column="operationTime" jdbcType="CHAR" property="operationtimeStr" />
+    <result column="validityBit" jdbcType="TINYINT" property="validitybit" />
+  </resultMap>
+  <resultMap type="com.lm.vo.IntegralVo" id="IntegralVo" extends="BaseResultMap">
+     <result column="teacherName" jdbcType="CHAR" property="teachername" />
+    <result column="name" jdbcType="CHAR" property="name" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    integral_id, student_id,teacher_id integralFlow, integralDirection, integral, operationTime, 
+    validityBit
+  </sql>
+  <!--  根据老师id查询老师积分信息 -->
+  <select id="selectIntegral" resultMap="IntegralVo">
+	  select Integraltable.*,teachertable.teacherName from Integraltable inner join 
+      teachertable on Integraltable.teacher_id=teachertable.teacher_id
+		<where>
+			<if test="teachername!='' and teachername!=null">
+				 teachertable.teacherName like '%${teachername}%'
+			</if>
+			<if test="integraldirection!='' and integraldirection!=null">
+				and Integraltable.integralDirection=#{integraldirection}
+			</if>
+			<if test="startTime!='' and startTime!=null and endTime!='' and endTime!=null ">
+				and Integraltable.operationTime between #{startTime} and #{endTime}  
+				<!-- 时间段条件  startTime ：开始时间  endTime：结束时间 -->
+			</if>
+			<if test="teacher_id!='' and teacher_id!=null">
+				and Integraltable.teacher_id=#{teacher_id}
+			</if>
+		</where>
+	</select>
+	 <!--  根据积分id查询积分信息 -->
+   <select id="selectIntegralBYid" resultMap="BaseResultMap">
+	  select Integraltable.*from Integraltable
+		<where>
+			<if test="integralId!='' and integralId!=null">
+				 Integraltable.integral_id =#{integralId}
+			</if>
+		</where>
+	</select>
+	<!--   根据积分id修改积分有效否 -->
+  <update id="updateIntegral" parameterType="com.lm.po.Integraltable">
+		update Integraltable
+		<set>
+			student_id= #{studentId,jdbcType=INTEGER},
+			teacher_id= #{teacher_id,jdbcType=INTEGER},
+			integralFlow=#{integralflow,jdbcType=CHAR},
+			integralDirection= #{integraldirection,jdbcType=CHAR},
+			integral= #{integral,jdbcType=CHAR},
+			operationTime= #{operationtime,jdbcType=TIMESTAMP},
+			validityBit= #{validitybit,jdbcType=TINYINT}
+		</set>
+		where integral_id = #{integralId,jdbcType=INTEGER}
+	</update>
+	<!--  根据学生id查询学生积分信息 -->
+  <select id="selectIntegralBYstudentId" resultMap="IntegralVo">
+	  select integraltable.*,studenttable.name from integraltable inner join 
+        studenttable on integraltable.student_id=studenttable.student_id
+		<where>
+			<if test="name!='' and name!=null">
+				 studenttable.name like '%${name}%'
+			</if>
+			<if test="integraldirection!='' and integraldirection!=null">
+				and Integraltable.integralDirection=#{integraldirection}
+			</if>
+			<if test="startTime!='' and startTime!=null and endTime!='' and endTime!=null ">
+				and Integraltable.operationTime between #{startTime} and #{endTime}  
+				<!-- 时间段条件  startTime ：开始时间  endTime：结束时间 -->
+			</if>
+			<if test="studentId!='' and studentId!=null">
+				and Integraltable.student_id=#{studentId}
+			</if>
+		</where>
+	</select>
+</mapper>

@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lm.dao.TitletableMapper">
+  <resultMap id="BaseResultMap" type="com.lm.po.Titletable">
+    <id column="title_id" jdbcType="INTEGER" property="titleId" />
+    <result column="titleType_id" jdbcType="INTEGER" property="titletypeId" />
+    <result column="titleA" jdbcType="LONGVARCHAR" property="titleA" />
+    <result column="titleScore" jdbcType="DOUBLE" property="titlescore" />
+    <result column="optionA" jdbcType="LONGVARCHAR" property="optionA" />
+    <result column="answerA" jdbcType="LONGVARCHAR" property="answerA" />
+    <result column="serial" jdbcType="INTEGER" property="serial" />
+    <result column="creationTime" jdbcType="TIMESTAMP" property="creationtime" />
+    <result column="enableBit" jdbcType="TINYINT" property="enablebit" />
+     <result column="title_type" jdbcType="INTEGER" property="title_type" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    title_id, titleType_id, titleA, titleScore, optionA, answerA, serial, creationTime, 
+    enableBit,title_type
+  </sql>
+<!--   新增题目 -->
+  <insert id="insertTitle" parameterType="com.lm.po.Titletable">
+    insert into titletable (titleType_id, titleA, 
+      titleScore, optionA, answerA, 
+      serial, creationTime, enableBit,title_type
+      )
+    values (#{titletypeId,jdbcType=INTEGER}, #{titleA,jdbcType=LONGVARCHAR}, 
+      #{titlescore,jdbcType=DOUBLE}, #{optionA,jdbcType=LONGVARCHAR}, #{answerA,jdbcType=LONGVARCHAR}, 
+      #{serial,jdbcType=INTEGER}, #{creationtime,jdbcType=TIMESTAMP}, #{enablebit,jdbcType=TINYINT},
+      #{title_type,jdbcType=INTEGER}
+      )
+  </insert>
+	<!--  根据题目类型id查询题目-->
+  <select id="selectTitle_titleTypeid" resultMap="BaseResultMap">
+       select titletable.* from titletable
+       where titleType_id=#{titletypeId,jdbcType=INTEGER}
+  </select>
+   <!-- 根据题目id进行删除题目 -->
+	<delete id="deleteTitle" parameterType="java.lang.String">
+		delete from titletable
+		<where> 
+ 			<if test="titleId !=null and titleId !=''"> 
+ 				titletable.title_id = #{titleId,jdbcType=INTEGER}
+ 			</if> 
+       </where> 
+	</delete>
+</mapper>

@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lm.dao.ModuletableMapper">
+  <resultMap id="BaseResultMap" type="com.lm.po.Moduletable">
+    <id column="module_id" jdbcType="INTEGER" property="moduleId" />
+    <result column="ModuleName" jdbcType="CHAR" property="modulename" />
+  </resultMap>
+   <resultMap type="com.lm.vo.PrivilegeVo" id="PrivilegeVo" extends="BaseResultMap">
+        <result column="userType_id" jdbcType="INTEGER" property="usertypeId" />
+        <result column="privilege" jdbcType="CHAR" property="privilege" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    module_id, ModuleName
+  </sql>
+  <!--   查询模块  insert table -->
+   <select id="selectModule" resultMap="BaseResultMap">
+       select moduletable.* from moduletable 
+  </select>
+  <!--   查询模块 update table -->
+    <select id="selectModule_up" resultMap="PrivilegeVo"> 
+       select moduletable.*,privilegetable.userType_id,privilegetable.privilege from moduletable left join 
+      privilegetable on moduletable.module_id=privilegetable.module_id
+       where privilegetable.userType_id=#{usertypeId,jdbcType=INTEGER} 
+   </select> 
+  
+</mapper>
